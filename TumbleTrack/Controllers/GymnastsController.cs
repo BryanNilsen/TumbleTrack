@@ -56,7 +56,6 @@ namespace TumbleTrack.Controllers
         // GET: Gymnasts/Create
         public IActionResult Create()
         {
-            //ViewData["UserId"] = new SelectList(_context.ApplicationUsers, "Id", "Id");
             return View();
         }
 
@@ -78,7 +77,7 @@ namespace TumbleTrack.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["UserId"] = new SelectList(_context.ApplicationUsers, "Id", "Id", gymnast.UserId);
+            //ViewData["UserId"] = new SelectList(_context.ApplicationUsers, "Id", "Id", gymnast.UserId);
             return View(gymnast);
         }
 
@@ -95,7 +94,7 @@ namespace TumbleTrack.Controllers
             {
                 return NotFound();
             }
-            ViewData["UserId"] = new SelectList(_context.ApplicationUsers, "Id", "Id", gymnast.UserId);
+            //ViewData["UserId"] = new SelectList(_context.ApplicationUsers, "Id", "Id", gymnast.UserId);
             return View(gymnast);
         }
 
@@ -111,10 +110,15 @@ namespace TumbleTrack.Controllers
                 return NotFound();
             }
 
+            ModelState.Remove("User");
+            ModelState.Remove("UserId");
             if (ModelState.IsValid)
             {
                 try
                 {
+                    // Get the current user
+                    var user = await GetCurrentUserAsync();
+                    gymnast.User = user;
                     _context.Update(gymnast);
                     await _context.SaveChangesAsync();
                 }
@@ -131,7 +135,7 @@ namespace TumbleTrack.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
-            ViewData["UserId"] = new SelectList(_context.ApplicationUsers, "Id", "Id", gymnast.UserId);
+            //ViewData["UserId"] = new SelectList(_context.ApplicationUsers, "Id", "Id", gymnast.UserId);
             return View(gymnast);
         }
 

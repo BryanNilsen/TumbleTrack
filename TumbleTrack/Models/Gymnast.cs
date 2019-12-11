@@ -27,6 +27,7 @@ namespace TumbleTrack.Models
 
         [Required]
         [DataType(DataType.Date)]
+        [Display(Name = "Birth Date")]
         public DateTime DateOfBirth { get; set; }
 
         // Related Data
