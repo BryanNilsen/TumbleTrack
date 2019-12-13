@@ -41,6 +41,9 @@ namespace TumbleTrack.Controllers
             }
 
             var meet = await _context.Meets
+                .Include(m => m.Events)
+                    .ThenInclude(t => t.GymnastEvents)
+                    .ThenInclude(t => t.Gymnast)
                 .Include(m => m.User)
                 .FirstOrDefaultAsync(m => m.MeetId == id);
             if (meet == null)
@@ -74,6 +77,18 @@ namespace TumbleTrack.Controllers
                 meet.User = user;
                 _context.Add(meet);
                 await _context.SaveChangesAsync();
+
+                int meetId = meet.MeetId;
+
+                // Create default events for this meet
+                Event bar = new Event() { MeetId = meetId, Name = "Uneven Bars" };
+                Event beam = new Event() { MeetId = meetId, Name = "Balance Beam" };
+                Event floor = new Event() { MeetId = meetId, Name = "Floor Exercise" };
+                Event vault = new Event() { MeetId = meetId, Name = "Vault" };
+
+                _context.AddRange(bar, beam, floor, vault);
+                await _context.SaveChangesAsync();
+
                 return RedirectToAction(nameof(Index));
             }
             //ViewData["UserId"] = new SelectList(_context.ApplicationUsers, "Id", "Id", meet.UserId);
